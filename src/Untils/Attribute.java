@@ -1,0 +1,68 @@
+package Untils;
+
+public class Attribute {
+    /**
+     * 属性名
+     */
+    public String attributeName;
+
+    /**
+     * 属性类型
+     */
+    public String attributeType;
+
+    /**
+     * 属性长度
+     */
+    public int attributeLength;
+
+    /**
+     * 是否是主键
+     */
+    public boolean isPrimaryKey;
+
+    /**
+     * 是否能为空
+     */
+    public boolean isNoEmpty;
+
+    public int getAttributeLength() {
+        return attributeLength;
+    }
+
+    public String getAttributeName() {
+        return attributeName;
+    }
+
+    public String getAttributeType() {
+        return attributeType;
+    }
+
+    public boolean isNoEmpty() {
+        return isNoEmpty;
+    }
+
+    public boolean isPrimaryKey() {
+        return isPrimaryKey;
+    }
+
+    public void setNoEmpty(boolean noEmpty) {
+        isNoEmpty = noEmpty;
+    }
+
+    public void setPrimaryKey(boolean primaryKey) {
+        isPrimaryKey = primaryKey;
+    }
+
+    public void setAttributeLength(int attributeLength) {
+        this.attributeLength = attributeLength;
+    }
+
+    public void setAttributeName(String attributeName) {
+        this.attributeName = attributeName;
+    }
+
+    public void setAttributeType(String attributeType) {
+        this.attributeType = attributeType;
+    }
+}

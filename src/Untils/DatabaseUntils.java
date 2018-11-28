@@ -13,9 +13,11 @@ public class DatabaseUntils {
     public static boolean creatDatabase(String databaseName){
         File file=new File(databasePath +databaseName);
         File fileDataDictionary=new File(dataDictionaryFolderPath +databaseName);
-        if(!file.exists()&&!fileDataDictionary.exists()){//如果文件夹不存在
+        File indexfile=new File(IndexUntils.indexFolderPath +databaseName);
+        if(!file.exists()&&!fileDataDictionary.exists()&&!indexfile.exists()){//如果文件夹不存在
             file.mkdir();//创建文件夹
             fileDataDictionary.mkdir();
+            indexfile.mkdir();
             System.out.println("database create success");
             return true;
         }else {
@@ -32,9 +34,11 @@ public class DatabaseUntils {
     public static boolean deleteDatabase(String databaseName){
         File file=new File(databasePath +databaseName);
         File fileDataDictionary=new File(dataDictionaryFolderPath +databaseName);
-        if (file.exists()&&fileDataDictionary.exists()) {
+        File indexfile=new File(IndexUntils.indexFolderPath +databaseName);
+        if (file.exists()&&fileDataDictionary.exists()&&indexfile.exists()) {
             file.delete();
             fileDataDictionary.delete();
+            indexfile.delete();
             System.out.println("Query Ok !");
             return true;
         }
@@ -52,6 +56,7 @@ public class DatabaseUntils {
         if(file.exists()){
             dataTablepath = databasePath +"/"+databaseName+"/";
             dataDictionaryFilePath=dataDictionaryFolderPath+"/"+databaseName+"/";
+            IndexUntils.indexFilePath=IndexUntils.indexFolderPath+"/"+databaseName+"/";
             return  true;
         }else{
             return false;

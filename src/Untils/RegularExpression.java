@@ -86,4 +86,24 @@ public interface RegularExpression {
      */
     public static String UPDATEWHRER="(update|UPDATE)\\s+[A-Za-z_]+\\s+(set|SET)\\s+[A-Za-z_]+\\s*=\\s*('\\w+'|'[\\u4e00-\\u9fa5]+'|[0-9]+)\\s+(where|WHERE)\\s+[A-Za-z_]+\\s*(=|>|<)\\s*('\\w+'|'[\\u4e00-\\u9fa5]+'|[0-9]+)\\s*;";
 
+
+    /**
+     * 添加普通索引
+     */
+    public static String ADDINDEX="(alter|ALTER)\\s+(table|TABLE)\\s+[A-Za-z_]+\\s+(add|ADD)\\s+(index|INDEX)\\s+[A-Za-z_]+\\s*\\(\\s*[A-Za-z_]+\\s*\\)\\s*;";
+
+    /**
+     * 删除普通索引
+     */
+    public static String DROPINDEX="(alter|ALTER)\\s+(table|TABLE)\\s+[A-Za-z_]+\\s+(drop|DROP)\\s+(index|INDEX)\\s+[A-Za-z_]+\\s*;";
+
+    /**
+     * 查看索引
+     */
+    public static String SHOWINDEX="(show|SHOW)\\s+(index|INDEX)\\s+(from|FROM)\\s+[A-Za-z_]+\\s*;";
+
+    /**
+     * 显示B+树
+     */
+    public static String SHOWBPLUSTREE="(show|SHOW)\\s+(index|INDEX)\\s+(tree|TREE)\\s+[A-Za-z_]+\\s+(from|FROM)\\s+[A-Za-z_]+\\s*;";
 }

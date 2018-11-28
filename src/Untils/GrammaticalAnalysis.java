@@ -1,5 +1,7 @@
 package Untils;
 
+import Tree.BPlusTree;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -108,7 +110,24 @@ public class GrammaticalAnalysis {
                             System.out.println(name);
                         }
                         break;
-                    } else {
+                    } else if(RegularUntils.isValid(sentence,RegularExpression.SHOWINDEX)==true){
+                        IndexUntils.showIndex(sentence);
+                        break;
+                    }else if(RegularUntils.isValid(sentence,RegularExpression.SHOWBPLUSTREE)==true){
+                        String getTableName="[A-Za-z_]+\\s*;";
+                        String tableName=RegularUntils.getValues(sentence,getTableName);
+                        tableName=tableName.replace(" ","");
+                        tableName=tableName.substring(0,tableName.length()-1);
+
+                        String getIndexName="(tree|TREE)\\s+[A-Za-z_]+";
+                        String indexName=RegularUntils.getValues(sentence,getIndexName);
+                        indexName=indexName.replace(" ","");
+                        indexName=indexName.substring(4,indexName.length());
+
+                        File indexfile=new File(IndexUntils.indexFilePath+tableName+"/"+indexName+".txt");
+                        BPlusTree.printBPlusTree(IndexUntils.getIndexTree(indexfile));
+                        break;
+                    } else{
                         System.out.println("The input sentence error !");
                         break;
                     }
@@ -118,8 +137,18 @@ public class GrammaticalAnalysis {
                     DataTableUntils.selectFromTable(sentence);
                     break;
                 } else if (temp.equals(Keywords.ALTER)||temp.equals(Keywords.ALTER.toUpperCase())) {
-                    DataDictionary.addOrDropCOLUMN(sentence);
-                    break;
+                    if(RegularUntils.isValid(sentence,RegularExpression.ALTERDROPCOLUMN)||RegularUntils.isValid(sentence,RegularExpression.ALTERADDCOLUMN)){
+                        DataDictionary.addOrDropCOLUMN(sentence);
+                        break;
+                    }else if(RegularUntils.isValid(sentence,RegularExpression.ADDINDEX)){
+                        IndexUntils.createIndex(sentence);
+                        break;
+                    }else if(RegularUntils.isValid(sentence,RegularExpression.DROPINDEX)){
+                        IndexUntils.deleteIndex(sentence);
+                        break;
+                    }else{
+                        break;
+                    }
                 } else if (temp.equals(Keywords.DELETE)||temp.equals(Keywords.DELETE.toUpperCase())) {
                     DataTableUntils.deleteSentence(sentence);
                     break;

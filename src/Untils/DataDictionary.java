@@ -16,6 +16,10 @@ public class DataDictionary {
         List<Attribute> listDictionary = new ArrayList<>();
         try {
             String primaryKey = "";
+            String indexName = "";
+            String column="";
+            List<String> columnlist=new ArrayList<>();
+            List<String> indexNamelist=new ArrayList<>();
             File fileDataDictionary = new File(DatabaseUntils.dataDictionaryFilePath + tableName + ".txt");
             if (fileDataDictionary.exists()) {
                 String line;
@@ -31,11 +35,28 @@ public class DataDictionary {
                             int length = primaryKey.length();
                             primaryKey = primaryKey.substring(1, length - 1);
                         }
-                    } else {
+
+                    } else if (line.substring(0, 5).equals("index") || line.substring(0, 5).equals("INDEX")) {
+                        String getColumn = "\\([A-Za-z_]+\\)";
+                        Pattern p3 = Pattern.compile(getColumn);
+                        Matcher m3 = p3.matcher(line);
+                        while (m3.find()) {
+                            column = m3.group();
+                            int length = column.length();
+                            column = column.substring(1, length - 1);
+                            columnlist.add(column);
+                        }
+                        String getIndexName = "(index|INDEX)\\s+[A-Za-z_]+";
+                        indexName=RegularUntils.getValues(line,getIndexName);
+                        indexName=indexName.replace(" ","");
+                        indexName=indexName.substring(5,indexName.length());
+                        indexNamelist.add(indexName);
+
+                    }else {
                         Attribute attribute = new Attribute();
                         String word[] = line.split(" ");
                         for (int i = 0; i < word.length; i++) {
-                            if (!word[0].equals("primary") || !word[0].equals("PRIMARY")) {
+                            if (!word[0].equals("primary") || !word[0].equals("PRIMARY")||!word[0].equals("index") || !word[0].equals("INDEX")) {
                                 attribute.setAttributeName(word[0]);
                             }
                         }
@@ -47,7 +68,7 @@ public class DataDictionary {
                         String result = RegularUntils.getValues(line, isNull);
                         if (result.equals("null")) {
                             attribute.setNoEmpty(false);
-                        } else {
+                        }else{
                             attribute.setNoEmpty(true);
                         }
                         listDictionary.add(attribute);
@@ -55,10 +76,18 @@ public class DataDictionary {
                 }
                 for (int i = 0; i < listDictionary.size(); i++) {
                     if (listDictionary.get(i).getAttributeName().equals(primaryKey)) {
-                        listDictionary.get(i).setPrimaryKey(true);
-                    } else {
-                        listDictionary.get(i).setPrimaryKey(false);
+                        listDictionary.get(i).setPrimaryKey("pri");
+                        listDictionary.get(i).setIndexName(primaryKey);
                     }
+                    if(columnlist!=null&&indexNamelist!=null){
+                        for(int j=0;j<columnlist.size();j++){
+                            if(listDictionary.get(i).getAttributeName().equals(columnlist.get(j))){
+                                listDictionary.get(i).setKey("mul");
+                                listDictionary.get(i).setIndexName(indexNamelist.get(j));
+                            }
+                        }
+                    }
+
                 }
                 fr.close();
                 reader.close();
@@ -165,8 +194,18 @@ public class DataDictionary {
             while ((line = reader.readLine()) != null) {
                 String dictionary[] = line.split(" ");
                 if (dictionary[0].equals(columnName)) {
-                    continue;
-                } else {
+                   continue;
+                } else if(dictionary[0].equals("index")||dictionary[0].equals("INDEX")){
+                    String getIndexName="(index|INDEX)\\s+[A-Za-z_]+";
+                    String indexName=RegularUntils.getValues(line,getIndexName);
+                    indexName=indexName.replace(" ","");
+                    indexName=indexName.substring(5,indexName.length());
+                    if(indexName.equals(columnName)){
+                        continue;
+                    }else{
+                        list.add(line);
+                    }
+                }else{
                     list.add(line);
                 }
 
@@ -230,5 +269,8 @@ public class DataDictionary {
             return false;
         }
         return false;
+    }
+    public static void main(String[] arg){
+        DataTableUntils.descTableStructure("department");
     }
 }

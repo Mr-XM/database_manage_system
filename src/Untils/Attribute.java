@@ -1,5 +1,7 @@
 package Untils;
 
+import java.util.SplittableRandom;
+
 public class Attribute {
     /**
      * 属性名
@@ -17,14 +19,28 @@ public class Attribute {
     public int attributeLength;
 
     /**
-     * 是否是主键
+     * 键值类型
      */
-    public boolean isPrimaryKey;
+    public String key="";
+
+    /**
+     * 主键
+     */
+    public String primaryKey="";
+
+    /**
+     * 索引名字
+     */
+    public String indexName="";
 
     /**
      * 是否能为空
      */
     public boolean isNoEmpty;
+
+    public String getPrimaryKey() {
+        return primaryKey;
+    }
 
     public int getAttributeLength() {
         return attributeLength;
@@ -42,16 +58,28 @@ public class Attribute {
         return isNoEmpty;
     }
 
-    public boolean isPrimaryKey() {
-        return isPrimaryKey;
+    public String getKey() {
+        return key;
+    }
+
+    public String getIndexName() {
+        return indexName;
+    }
+
+    public void setPrimaryKey(String primaryKey) {
+        this.primaryKey = primaryKey;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public void setIndexName(String indexName) {
+        this.indexName = indexName;
     }
 
     public void setNoEmpty(boolean noEmpty) {
         isNoEmpty = noEmpty;
-    }
-
-    public void setPrimaryKey(boolean primaryKey) {
-        isPrimaryKey = primaryKey;
     }
 
     public void setAttributeLength(int attributeLength) {

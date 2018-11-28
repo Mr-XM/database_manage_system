@@ -15,8 +15,10 @@ public class DataTableUntils {
     public static boolean createTable(String dataTableName) {
         File file = new File(DatabaseUntils.dataTablepath + dataTableName + ".txt");
         File fileDataDictionary = new File(DatabaseUntils.dataDictionaryFilePath + dataTableName + ".txt");
-        if (!file.exists() && !fileDataDictionary.exists()) {
+        File indexfile=new File(IndexUntils.indexFilePath + dataTableName);
+        if (!file.exists() && !fileDataDictionary.exists()&&!indexfile.exists()) {
             try {
+                indexfile.mkdir();
                 file.createNewFile();
                 fileDataDictionary.createNewFile();
                 return true;
@@ -37,9 +39,13 @@ public class DataTableUntils {
     public static boolean deleteTable(String dataTableName) {
         File file = new File(DatabaseUntils.dataTablepath + dataTableName + ".txt");
         File fileDataDictionary = new File(DatabaseUntils.dataDictionaryFilePath + dataTableName + ".txt");
+        File indexfile = new File(IndexUntils.indexFilePath + dataTableName);
         if (file.exists() && fileDataDictionary.exists()) {
             fileDataDictionary.delete();
             file.delete();
+            if(indexfile.exists()){
+                indexfile.delete();
+            }
             System.out.println("Query Ok !");
             return true;
         }else {
@@ -259,9 +265,9 @@ public class DataTableUntils {
         if (listDictionary.isEmpty()) {
             System.out.println("The table '" + tableName + "' is not exist !");
         } else {
-            System.out.println("Field" + "\t" + "Type" + "\t" + "NotNull" + "\t" + "IsPrimaryKey" + "\t");
+            System.out.println("Field" + "\t" + "Type" + "\t" + "NotNull" + "\t" + "PrimaryKey" + "\t"+"Key");
             for (int i = 0; i < listDictionary.size(); i++) {
-                System.out.println(listDictionary.get(i).getAttributeName() + "\t" + listDictionary.get(i).getAttributeType() + "(" + listDictionary.get(i).getAttributeLength() + ")\t" + listDictionary.get(i).isNoEmpty + "\t" + listDictionary.get(i).isPrimaryKey);
+                System.out.println(listDictionary.get(i).getAttributeName() + "\t" + listDictionary.get(i).getAttributeType() + "(" + listDictionary.get(i).getAttributeLength() + ")\t" + listDictionary.get(i).isNoEmpty + "\t" + listDictionary.get(i).getPrimaryKey()+"\t"+listDictionary.get(i).getKey());
             }
         }
     }
@@ -321,7 +327,7 @@ public class DataTableUntils {
                 List<LinkedHashMap> linkedHashMaps = getDataFromFile(file);
                 if (!linkedHashMaps.isEmpty()) {
                     for (int i = 0; i < list.size(); i++) {
-                        if (list.get(i).isPrimaryKey() == true) {
+                        if (list.get(i).getKey().equals("pri")) {
                             for (int j = 0; j < linkedHashMaps.size(); j++) {
                                 Iterator iter = linkedHashMaps.get(j).entrySet().iterator();
                                 while (iter.hasNext()) {
@@ -339,6 +345,7 @@ public class DataTableUntils {
             }
             line = line + "\n";
             writeInToFile(file, line);
+            IndexUntils.updateIndexFile(tableName);
             System.out.println("Query Ok !");
             return true;
         } else {
@@ -475,6 +482,7 @@ public class DataTableUntils {
                     deleteDataFromTable(file, entry.getKey().toString(), entry.getValue().toString());
                 }
             }
+            IndexUntils.updateIndexFile(tableName);
             System.out.println("Query Ok !");
         } else if (RegularUntils.isValid(sentence, RegularExpression.DELETEDATAWHERE)) {
             String getTableName = "(FROM|from)\\s+[A-Za-z_]+";
@@ -501,6 +509,7 @@ public class DataTableUntils {
                     }
                 }
             }
+            IndexUntils.updateIndexFile(tableName);
             System.out.println("Query Ok !");
         } else {
             System.out.println("The input sentence error !");
@@ -509,6 +518,11 @@ public class DataTableUntils {
     }
 
 
+    /**
+     * 更新语句操作
+     * @param sentence
+     * @return
+     */
     public static boolean updateSentence(String sentence) {
         if (RegularUntils.isValid(sentence, RegularExpression.UPDATE)) {
             String getTableName = "(update|UPDATE)\\s+[A-Za-z_]+";
@@ -526,6 +540,8 @@ public class DataTableUntils {
             value = value.substring(1, value.length());
             File file = new File(DatabaseUntils.dataTablepath + tableName + ".txt");
             updateFromTable(file, key, value, "", "");
+            IndexUntils.updateIndexFile(tableName);
+            IndexUntils.updateIndexFile(tableName);
             System.out.println("Query Ok !");
         } else if (RegularUntils.isValid(sentence, RegularExpression.UPDATEWHRER)) {
             String getTableName = "(update|UPDATE)\\s+[A-Za-z_]+";
@@ -553,6 +569,7 @@ public class DataTableUntils {
             value2 = value2.substring(1, value2.length());
             File file = new File(DatabaseUntils.dataTablepath + tableName + ".txt");
             updateFromTable(file, key, value, key2, value2);
+            IndexUntils.updateIndexFile(tableName);
             System.out.println("Query Ok !");
         } else {
             System.out.println("The sentence is error !");
